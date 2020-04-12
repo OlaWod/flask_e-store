@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+        {% for book in books %}
+            <div class="book" xmlns="http://www.w3.org/1999/html">
+                <img width="30%" height="30%" src="data:image/jpg;base64,{{ str(base64.b64encode(book.image))[2:-1] }}"/>
+                书名：《{{ book.bookname }}》
+                价格：{{ book.price }}元</br>
+                描述：{{ book.detail }}
+
+                <form action="{{ url_for('index_like') }}" method=post>
+                    <input type=hidden name=book_id value={{ book.id }} readonly>
+                    <input type=hidden name=seller_id value={{ book.seller_id}} readonly>
+                    {{ form.like() }}
+                </form>
+
+                <form action="{{ url_for('index_buy') }}" method=post>
+                    <input type=hidden name=book_id value={{ book.id }} readonly>
+                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                    {{ form.buy() }}
+                </form>
+
+                <hr>
+            </div>
+        {% else %}
+            <li><em>还没有人卖书>.<</em><li>
+        {% endfor %}
+
+{% endblock %}

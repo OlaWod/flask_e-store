@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <h2>我要卖书</h2>
+
+  <form action="{{ url_for('sell') }}" method=post enctype="multipart/form-data">
+
+  {% if form.errors %}
+      <ul>
+          {% for name, errors in form.errors.items() %}
+              {% for error in errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          {% endfor %}
+      </ul>
+  {% endif %}
+
+
+
+      <dl>
+          <dt>{{ form.bookname.label }}:
+          <dd><input type=text name=bookname>
+
+          <dt>{{ form.detail.label }}:
+          <dd><textarea rows=5 cols=40 name=detail></textarea>
+
+          <dt>{{ form.price.label }}:
+          <dd><input type=number name=price>
+
+          <dt>{{ form.image.label }}:
+          <dd><input type=file name=image><br/>
+
+          <dt>{{ form.qrcode.label }}:
+          <dd><input type=file name=qrcode><br/>
+
+          <dd>{{ form.submit() }}
+      </dl>
+
+  </form>
+
+{% endblock %}

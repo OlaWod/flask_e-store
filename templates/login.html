@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <h2>登入</h2>
+
+  <form action="{{ url_for('login') }}" method=post>
+
+  {% if form.errors %}
+      <ul>
+          {% for name, errors in form.errors.items() %}
+              {% for error in errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          {% endfor %}
+      </ul>
+  {% endif %}
+
+
+
+      <dl>
+          {{ form.hidden_tag() }}
+          <dt>{{ form.username.label }}:
+          <dd><input type=text name=username>
+          <dt>{{ form.password.label }}:
+          <dd><input type=password name=password>
+
+          <dd>{{ form.submit() }}
+      </dl>
+
+  </form>
+
+{% endblock %}

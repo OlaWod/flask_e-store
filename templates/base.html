@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>朴实无华书店</title>
+    <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='style.css') }}">
+  </head>
+
+  <body>
+    <div class='page'>
+      <h1><a href="{{ url_for('index') }}">朴实无华书店</a></h1>
+
+      <div class='metanav'>
+            <a href="{{ url_for('admin') }}">网站管理员</a>
+            <a href="{{ url_for('userinfo') }}">用户信息</a>
+            <a href="{{ url_for('sell') }}">卖书</a>
+            <a href="{{ url_for('mysell') }}">我卖的书</a>
+            <a href="{{ url_for('cart') }}">购物车</a>
+            <a href="{{ url_for('register') }}">注册</a>
+            {% if not session.login %}
+                 <a href="{{ url_for('login') }}">登入</a>
+            {% else %}
+                <a href="{{ url_for('logout') }}">退出</a>
+            {% endif %}
+      </div>
+
+      {% for message in get_flashed_messages() %}
+        <div class='flash'>{{ message }}</div>
+      {% endfor %}
+
+      {% block body %}{% endblock %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h2>注册</h2>
+
+    <form action="{{ url_for('register') }}" method=post>
+
+    {% if form.errors %}
+      <ul>
+          {% for name, errors in form.errors.items() %}
+              {% for error in errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          {% endfor %}
+      </ul>
+  {% endif %}
+
+      <dl>
+          {{ form.hidden_tag() }}
+          <dt>{{ form.username.label }}:
+          <dd><input type=text name=username>
+          <dt>{{ form.password.label }}:
+          <dd><input type=password name=password>
+          <dt>{{ form.password2.label }}:
+          <dd><input type=password name=password2>
+          <dt>{{ form.moreinfo.label }}:
+          <dd><textarea rows=5 cols=40 name=moreinfo></textarea>
+
+          <dd>{{ form.submit() }}
+      </dl>
+
+    </form>
+{% endblock %}
