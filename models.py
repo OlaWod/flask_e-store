@@ -9,12 +9,13 @@ class Book(db.Model):
     bookname = db.Column(db.String(100), nullable=False)  # 书名
     detail = db.Column(db.Text)  # 详细介绍
     price = db.Column(db.Float, nullable=False)  # 单价
-    image = db.Column(db.LargeBinary(length=65536))  # 照片
-    qrcode = db.Column(db.LargeBinary(length=65536), nullable=False)  # 付款码
     seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 卖家id,外键
     state = db.Column(db.String(100), nullable=False)  # 书本状态
     # 书本状态：正在卖; 已下架
     tag = db.Column(db.String(100))  # 标签
+    image = db.Column(db.LargeBinary(length=65536))  # 照片
+    qrcode = db.Column(db.LargeBinary(length=65536), nullable=False)  # 付款码
+    file = db.Column(db.Text, nullable=False)  # 文件的磁力链接
 
 
 # 用户
@@ -60,6 +61,7 @@ class Order(db.Model):
     book_id = db.Column(db.Integer, nullable=False)  # 书籍id
     state = db.Column(db.String(100), nullable=False)  # 订单状态
     # 订单状态：收藏; 已购买
+    file = db.Column(db.Text, nullable=False)  # 文件的磁力链接
 
 
 # 留言

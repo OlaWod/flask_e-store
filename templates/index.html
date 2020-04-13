@@ -2,6 +2,8 @@
 
 {% block body %}
 
+    <h2>首页</h2>
+
         <form action="{{ url_for('search') }}" method=post>
             <input type=text name=content>
             <button name=submit>搜索</button>
@@ -37,7 +39,6 @@
                 书名：《{{ book.bookname }}》
                 价格：{{ book.price }}元</br>
                 描述：{{ book.detail }}
-               <a href="data:image/jpeg;base64,{{ str(base64.b64encode(book.image))[2:-1] }}" download="xx.jpg">点击下载</a>
 
 
                 <form action="{{ url_for('index_like') }}" method=post>

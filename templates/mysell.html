@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-        我在卖的书：</br>
+    <h2>我在卖的书</h2></br>
         {% for book in books %}
             <div class="book" xmlns="http://www.w3.org/1999/html">
                 <img width="30%" height="30%" src="data:image/jpg;base64,{{ str(base64.b64encode(book.image))[2:-1] }}"/>

@@ -25,7 +25,7 @@
 
     <ul class=entries>
         {% for message in messages %}
-            <li><h2>{{ message.username}}</h2>{{ message.text|safe }}</li>
+            <li><h2>{{ message.username}}</h2>{{ message.text }}</li>
         {% else %}
             <li><em>还没有人留言>.<</em><li>
         {% endfor %}

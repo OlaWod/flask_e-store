@@ -23,6 +23,9 @@ admin = Admin(app, name='朴实无华后台', index_view=MyAdminIndexView())
 admin.add_view(MyModelView(User, db.session, name='用户'))
 admin.add_view(MyModelView(Book, db.session, name='书籍'))
 admin.add_view(MyModelView(Order, db.session, name='订单'))
+admin.add_view(MyModelView(Message, db.session, name='留言'))
+admin.add_view(MyModelView(Comment, db.session, name='评论'))
+admin.add_view(MyModelView(Report, db.session, name='举报'))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -65,8 +68,9 @@ def index_like():
         if order:
             flash('您已经收藏过这本书了呢')
         else:
+            book = Book.query.filter(Book.id == form.book_id.data).first()
             order = Order(book_id=form.book_id.data, seller_id=form.seller_id.data, buyer_id=current_user.id,
-                          state="收藏")
+                          state="收藏", file=book.file)
             db.session.add(order)
             db.session.commit()
             flash('收藏成功！')
@@ -99,17 +103,34 @@ def cart_dislike():
 def index_buy():
     form = BuyBookForm()
     if form.validate_on_submit():
-        order = Order(book_id=form.book_id.data, seller_id=form.seller_id.data, buyer_id=current_user.id, state="已购买")
-        db.session.add(order)
+        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data,
+                                   Order.buyer_id == current_user.id, Order.state == "已购买").first()
+        if order:
+            flash('您已经买过这本书了呢')
+        else:
+            book = Book.query.filter(Book.id == form.book_id.data, Book.seller_id == form.seller_id.data).first()
+            return render_template('pay.html', book=book, base64=base64, str=str, form=form)
+    return redirect(url_for('cart'))
+
+@app.route('/paysuccess', methods=['GET', 'POST'])
+@login_required
+def paysuccess():
+    form = BuyBookForm()
+    if form.validate_on_submit():
+        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data,
+                                   Order.buyer_id == current_user.id, Order.state == "收藏").first()
+        if order:
+             order.state = "已购买"
+        else:
+            book = Book.query.filter(Book.id == form.book_id.data).first()
+            order = Order(book_id=form.book_id.data, seller_id=form.seller_id.data, buyer_id=current_user.id, file=book.file, state="已购买")
+            db.session.add(order)
+
         db.session.commit()
         flash('购买成功！')
-        return redirect(url_for('index'))
+        return redirect(url_for('cart'))
 
-    form = BuyBookForm()
-    books = Book.query.all()
-    return render_template('index.html', books=books, base64=base64, str=str, form=form)
-
-
+'''
 @app.route('/cart/buy', methods=['GET', 'POST'])
 @login_required
 def cart_buy():
@@ -123,7 +144,7 @@ def cart_buy():
         return redirect(url_for('cart'))
 
     return render_template('cart.html')
-
+'''
 
 @app.route('/mysell/delete', methods=['GET', 'POST'])
 @login_required
@@ -272,7 +293,7 @@ def sell():
         image = request.files['image'].read()
         qrcode = request.files['qrcode'].read()
         book = Book(bookname=form.bookname.data, tag=form.tag.data, detail=form.detail.data, price=form.price.data, state=form.state.data,
-                    image=image, qrcode=qrcode, seller_id=current_user.id)
+                    image=image, qrcode=qrcode, file=form.file.data, seller_id=current_user.id)
         db.session.add(book)
         db.session.commit()
         flash('这本书已经放在货架上啦！')

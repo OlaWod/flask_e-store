@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h2>支付《{{ book.bookname }}》{{ book.price }}元</h2>
+
+    <form action="{{ url_for('paysuccess') }}" method=post class=add-entry>
+
+    {% if form.errors %}
+      <ul>
+          {% for name, errors in form.errors.items() %}
+              {% for error in errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          {% endfor %}
+      </ul>
+  {% endif %}
+
+
+        <input type=hidden name=book_id value={{ book.id }} readonly>
+        <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+
+        <img width="80%" height="80%" src="data:;base64,{{ str(base64.b64encode(book.qrcode))[2:-1] }}"/>
+        <button name=submit>支付完成</button>
+
+
+    </form>
+
+
+{% endblock %}

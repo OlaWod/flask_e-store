@@ -36,6 +36,9 @@
           <dt>{{ form.qrcode.label }}:
           <dd><input type=file name=qrcode><br/>
 
+          <dt>{{ form.file.label }}:
+          <dd><textarea rows=5 cols=40 name=file></textarea>
+
           <input type=hidden name=state value="正在卖" readonly>
 
           <dd>{{ form.submit() }}

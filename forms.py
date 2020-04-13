@@ -31,6 +31,7 @@ class UploadBookForm(FlaskForm):
         FileRequired("付款码图片不能为空!"),
         FileAllowed(['jpg', 'png'], '付款码只能上传图片!')
     ])
+    file = TextAreaField(label='文件链接', validators=[DataRequired('文件不能为空！')])
     state = StringField(validators=[DataRequired('book_state is null')])
     submit = SubmitField(label='发布')
 
