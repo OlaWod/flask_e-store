@@ -1,6 +1,9 @@
 from flask import Flask, render_template, flash, request, session, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 import base64
 from forms import *
 
@@ -8,19 +11,48 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
+from models import *
+
 # flask-login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-from models import *
+from myadmin import *
+admin = Admin(app, name='朴实无华后台', index_view=MyAdminIndexView())
+admin.add_view(MyModelView(User, db.session, name='用户'))
+admin.add_view(MyModelView(Book, db.session, name='书籍'))
+admin.add_view(MyModelView(Order, db.session, name='订单'))
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = BuyBookForm()
-    books = Book.query.all()
-    return render_template('index.html', books=books, base64=base64, str=str, form=form)
+    searchform = SearchForm()
+    books = Book.query.filter(Book.state == "正在卖").all()
+    return render_template('index.html', books=books, base64=base64, str=str, form=form, searchform=searchform)
+
+
+@app.route('/index/comment', methods=['GET', 'POST'])
+@login_required
+def index_comment():
+    form = BuyBookForm()
+    if form.validate_on_submit():
+        session['comment_book_id'] = form.book_id.data
+        return redirect(url_for('leave_comment'))
+
+    return render_template('index.html', form=form)
+
+
+@app.route('/index/report', methods=['GET', 'POST'])
+@login_required
+def index_report():
+    form = BuyBookForm()
+    if form.validate_on_submit():
+        session['report_book_id'] = form.book_id.data
+        return redirect(url_for('leave_report'))
+
+    return render_template('index.html', form=form)
 
 
 @app.route('/index/like', methods=['GET', 'POST'])
@@ -28,11 +60,13 @@ def index():
 def index_like():
     form = BuyBookForm()
     if form.validate_on_submit():
-        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data, Order.buyer_id == current_user.id, Order.state == "收藏").first()
+        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data,
+                                   Order.buyer_id == current_user.id, Order.state == "收藏").first()
         if order:
             flash('您已经收藏过这本书了呢')
         else:
-            order = Order(book_id=form.book_id.data, seller_id=form.seller_id.data, buyer_id=current_user.id, state="收藏")
+            order = Order(book_id=form.book_id.data, seller_id=form.seller_id.data, buyer_id=current_user.id,
+                          state="收藏")
             db.session.add(order)
             db.session.commit()
             flash('收藏成功！')
@@ -48,7 +82,8 @@ def index_like():
 def cart_dislike():
     form = BuyBookForm()
     if form.validate_on_submit():
-        orders = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data, Order.buyer_id == current_user.id, Order.state == "收藏").all()
+        orders = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data,
+                                    Order.buyer_id == current_user.id, Order.state == "收藏").all()
         print(orders)
         for order in orders:
             db.session.delete(order)
@@ -80,13 +115,71 @@ def index_buy():
 def cart_buy():
     form = BuyBookForm()
     if form.validate_on_submit():
-        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data, Order.buyer_id == current_user.id, Order.state == "收藏").first()
+        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data,
+                                   Order.buyer_id == current_user.id, Order.state == "收藏").first()
         order.state = "已购买"
         db.session.commit()
         flash('购买成功！')
         return redirect(url_for('cart'))
 
     return render_template('cart.html')
+
+
+@app.route('/mysell/delete', methods=['GET', 'POST'])
+@login_required
+def mysell_delete():
+    form = BuyBookForm()
+    if form.validate_on_submit():
+        orders = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == current_user.id,
+                                    Order.state == "收藏").all()
+        for order in orders:
+            db.session.delete(order)
+
+        book = Book.query.filter(Book.id == form.book_id.data, Book.seller_id == current_user.id).first()
+        book.state = "已下架"
+
+        db.session.commit()
+        flash('下架成功')
+        return redirect(url_for('mysell'))
+
+    return render_template('mysell.html')
+
+
+@app.route('/mysell/edit', methods=['GET', 'POST'])
+@login_required
+def mysell_edit():
+    form = BuyBookForm()
+    if form.validate_on_submit():
+        session['edit_book_id'] = form.book_id.data
+        return redirect(url_for('edit'))
+
+    return render_template('mysell.html', form=form)
+
+
+@app.route('/edit', methods=['GET', 'POST'])
+@login_required
+def edit():
+    form = EditBookForm()
+    book = Book.query.filter(Book.id == session['edit_book_id']).first()
+    if form.validate_on_submit():
+
+        book.bookname = form.bookname.data
+        book.tag = form.tag.data
+        book.detail = form.detail.data
+        book.price = form.price.data
+        if form.image.data:
+            image = request.files['image'].read()
+            book.image = image
+        if form.qrcode.data:
+            qrcode = request.files['qrcode'].read()
+            book.qrcode = qrcode
+
+        db.session.commit()
+        flash('书本信息已更改')
+        session.pop('edit_book_id', None)
+        return redirect(url_for('mysell'))
+
+    return render_template('edit.html', form=form, book=book, int=int)
 
 
 @login_manager.user_loader
@@ -166,7 +259,7 @@ def cart():
 @login_required
 def mysell():
     form = BuyBookForm()
-    books = Book.query.filter(Book.seller_id == current_user.id).all()
+    books = Book.query.filter(Book.seller_id == current_user.id, Book.state == "正在卖").all()
 
     return render_template('mysell.html', books=books, base64=base64, str=str, form=form)
 
@@ -178,7 +271,8 @@ def sell():
     if form.validate_on_submit():
         image = request.files['image'].read()
         qrcode = request.files['qrcode'].read()
-        book = Book(bookname=form.bookname.data, detail=form.detail.data ,price=form.price.data ,image=image ,qrcode=qrcode ,seller_id=current_user.id)
+        book = Book(bookname=form.bookname.data, tag=form.tag.data, detail=form.detail.data, price=form.price.data, state=form.state.data,
+                    image=image, qrcode=qrcode, seller_id=current_user.id)
         db.session.add(book)
         db.session.commit()
         flash('这本书已经放在货架上啦！')
@@ -187,16 +281,118 @@ def sell():
     return render_template('sell.html', form=form)
 
 
-@app.route('/userinfo')
+@app.route('/userinfo', methods=['GET', 'POST'])
 @login_required
 def userinfo():
+    form = EditUserForm()
     user = User(current_user.id, current_user.username, current_user.password, current_user.moreinfo)
-    return render_template('userinfo.html', user=user)
+    if form.validate_on_submit():
+        return redirect(url_for('userinfo_edit'))
+
+    return render_template('userinfo.html', user=user, form=form)
+
+
+@app.route('/userinfo/edit', methods=['GET', 'POST'])
+@login_required
+def userinfo_edit():
+    form = RegisterForm()
+    user = User.query.filter(User.id == current_user.id).first()
+    if form.validate_on_submit():
+        checkuser = None
+        if current_user.username != form.username.data:
+            checkuser = User.query.filter(User.username == form.username.data).first()
+        if checkuser:
+            flash('此用户名已被使用!')
+        else:
+            user.username = form.username.data
+            user.password = form.password.data
+            user.moreinfo = form.moreinfo.data
+            db.session.commit()
+            flash('用户信息已更改')
+            return redirect(url_for('userinfo'))
+
+    return render_template('userinfo_edit.html', form=form, user=user)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    form = BuyBookForm()
+    searchform = SearchForm()
+    books = Book.query.filter(Book.state == "正在卖").all()
+    if searchform.validate_on_submit():
+        content = searchform.content.data
+        print(content)
+        books = Book.query.filter(or_(Book.bookname.like('%'+content+'%'), Book.detail.like('%'+content+'%')), Book.state == "正在卖").all()
+
+    return render_template('index.html', books=books, base64=base64, str=str, form=form, searchform=searchform)
+
+
+@app.route('/searchtag', methods=['GET', 'POST'])
+def searchtag():
+    form = BuyBookForm()
+    searchform = SearchForm()
+    books = Book.query.filter(Book.state == "正在卖").all()
+    if searchform.validate_on_submit():
+        content = searchform.content.data
+        print(content)
+        books = Book.query.filter(Book.tag == content, Book.state == "正在卖").all()
+
+    return render_template('index.html', books=books, base64=base64, str=str, form=form, searchform=searchform)
 
 
 @app.route('/admin')
 def admin():
-    return "hello-world"
+    return 'hello world'
+
+
+@app.route('/leave_message', methods=['GET', 'POST'])
+def leave_message():
+    form = MessageForm()
+    messages = Message.query.all()
+    if form.validate_on_submit():
+        username = "匿名用户"
+        if current_user.is_authenticated:
+            username = current_user.username
+        message = Message(username=username, text=form.text.data)
+        db.session.add(message)
+        db.session.commit()
+        flash('留言成功！')
+        return redirect(url_for('leave_message'))
+
+    return render_template('leave_message.html', form=form, messages=messages)
+
+
+@app.route('/comment', methods=['GET', 'POST'])
+@login_required
+def leave_comment():
+    form = MessageForm()
+    book = Book.query.filter(Book.id == session['comment_book_id']).first()
+    comments = Comment.query.filter(Comment.book_id == session['comment_book_id']).all()
+    if form.validate_on_submit():
+        comment = Comment(user_id=current_user.id, username=current_user.username, book_id=book.id, bookname=book.bookname, text=form.text.data)
+        db.session.add(comment)
+        db.session.commit()
+        flash('评论成功！')
+        session.pop('comment_book_id', None)
+        return redirect(url_for('index'))
+
+    return render_template('leave_comment.html', form=form, book=book, comments=comments)
+
+
+@app.route('/report', methods=['GET', 'POST'])
+@login_required
+def leave_report():
+    form = MessageForm()
+    book = Book.query.filter(Book.id == session['report_book_id']).first()
+    if form.validate_on_submit():
+        report = Report(user_id=current_user.id, username=current_user.username, book_id=book.id, bookname=book.bookname, text=form.text.data)
+        db.session.add(report)
+        db.session.commit()
+        flash('举报成功！')
+        session.pop('report_book_id', None)
+        return redirect(url_for('index'))
+
+    return render_template('leave_report.html', form=form, book=book)
 
 
 if __name__ == '__main__':

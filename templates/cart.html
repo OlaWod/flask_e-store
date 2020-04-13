@@ -22,6 +22,18 @@
                     {{ form.buy() }}
                 </form>
 
+                <form action="{{ url_for('index_comment') }}" method=post>
+                    <input type=hidden name=book_id value={{ book.id }} readonly>
+                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                    {{ form.comment() }}
+                </form>
+
+                <form action="{{ url_for('index_report') }}" method=post>
+                    <input type=hidden name=book_id value={{ book.id }} readonly>
+                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                    {{ form.report() }}
+                </form>
+
                 <hr>
             </div>
         {% else %}
@@ -35,6 +47,12 @@
                 《{{ book.bookname }}》
                 {{ book.price }}元</br>
                 {{ book.detail }}
+
+                <form action="{{ url_for('index_comment') }}" method=post>
+                    <input type=hidden name=book_id value={{ book.id }} readonly>
+                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                    {{ form.comment() }}
+                </form>
 
                 <hr>
             </div>

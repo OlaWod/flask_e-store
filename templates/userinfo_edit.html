@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <h2>修改用户 {{ user.username }} 的信息</h2>
+
+  <form action="{{ url_for('userinfo_edit') }}" method=post>
+
+  {% if form.errors %}
+      <ul>
+          {% for name, errors in form.errors.items() %}
+              {% for error in errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          {% endfor %}
+      </ul>
+  {% endif %}
+
+
+
+      <dl>
+          {{ form.hidden_tag() }}
+          <dt>{{ form.username.label }}:
+          <dd><input type=text name=username value={{ user.username }}>
+          <dt>{{ form.password.label }}:
+          <dd><input type=password name=password value={{ user.password }}>
+          <dt>{{ form.password2.label }}:
+          <dd><input type=password name=password2 value={{ user.password }}>
+          <dt>{{ form.moreinfo.label }}:
+          <dd><textarea rows=5 cols=40 name=moreinfo>{{ user.moreinfo }}</textarea>
+
+          <dd>{{ form.submit() }}
+      </dl>
+
+  </form>
+
+{% endblock %}

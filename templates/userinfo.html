@@ -11,4 +11,8 @@
 
         </ul>
 
+        <form action="{{ url_for('userinfo') }}" method=post>
+            {{ form.edit() }}
+        </form>
+
 {% endblock %}

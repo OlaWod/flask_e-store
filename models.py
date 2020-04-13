@@ -12,6 +12,9 @@ class Book(db.Model):
     image = db.Column(db.LargeBinary(length=65536))  # 照片
     qrcode = db.Column(db.LargeBinary(length=65536), nullable=False)  # 付款码
     seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 卖家id,外键
+    state = db.Column(db.String(100), nullable=False)  # 书本状态
+    # 书本状态：正在卖; 已下架
+    tag = db.Column(db.String(100))  # 标签
 
 
 # 用户
@@ -52,8 +55,38 @@ class Administrator(db.Model, UserMixin):
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 卖家id,外键
-    buyer_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 卖家id,外键
-    book_id = db.Column(db.Integer, db.ForeignKey("books.id"), nullable=False)  # 卖家id,外键
+    seller_id = db.Column(db.Integer, nullable=False)  # 卖家id
+    buyer_id = db.Column(db.Integer, nullable=False)  # 买家id
+    book_id = db.Column(db.Integer, nullable=False)  # 书籍id
     state = db.Column(db.String(100), nullable=False)  # 订单状态
-    # 订单状态：收藏; 已买
+    # 订单状态：收藏; 已购买
+
+
+# 留言
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(100), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+
+
+# 评论
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)  # 用户id
+    username = db.Column(db.String(100), nullable=False)  # 用户名
+    book_id = db.Column(db.Integer, nullable=False)  # 书籍id
+    bookname = db.Column(db.String(100), nullable=False)  # 书籍名
+    text = db.Column(db.Text, nullable=False)
+
+
+# 举报
+class Report(db.Model):
+    __tablename__ = 'reports'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)  # 用户id
+    username = db.Column(db.String(100), nullable=False)  # 用户名
+    book_id = db.Column(db.Integer, nullable=False)  # 书籍id
+    bookname = db.Column(db.String(100), nullable=False)  # 书籍名
+    text = db.Column(db.Text, nullable=False)

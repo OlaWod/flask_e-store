@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h2>举报《{{ book.bookname }}》</h2>
+
+    <form action="{{ url_for('leave_report') }}" method=post class=add-entry>
+
+    {% if form.errors %}
+      <ul>
+          {% for name, errors in form.errors.items() %}
+              {% for error in errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          {% endfor %}
+      </ul>
+  {% endif %}
+
+      <dl>
+        <dt>举报原因:
+        <dd><textarea rows=5 cols=40 name=text>例：涉嫌违法犯罪</textarea>
+        <dd><button name=submit>举报</button>
+      </dl>
+
+    </form>
+
+{% endblock %}

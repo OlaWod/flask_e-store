@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block body %}
-  <h2>我要卖书</h2>
+  <h2>编辑《{{ book.bookname }}》的信息</h2>
 
-  <form action="{{ url_for('sell') }}" method=post enctype="multipart/form-data">
+  <form action="{{ url_for('edit') }}" method=post enctype="multipart/form-data">
 
   {% if form.errors %}
       <ul>
@@ -19,24 +19,22 @@
 
       <dl>
           <dt>{{ form.bookname.label }}:
-          <dd><input type=text name=bookname>
+          <dd><input type=text name=bookname value={{ book.bookname }}>
 
           <dt>{{ form.tag.label }}:
-          <dd><input type=text name=tag>
+          <dd><input type=text name=tag value={{ book.tag }}>
 
           <dt>{{ form.detail.label }}:
-          <dd><textarea rows=5 cols=40 name=detail></textarea>
+          <dd><textarea rows=5 cols=40 name=detail>{{ book.detail }}</textarea>
 
           <dt>{{ form.price.label }}:
-          <dd><input type=number name=price>
+          <dd><input type=number name=price value={{ int(book.price) }}>
 
           <dt>{{ form.image.label }}:
           <dd><input type=file name=image><br/>
 
           <dt>{{ form.qrcode.label }}:
           <dd><input type=file name=qrcode><br/>
-
-          <input type=hidden name=state value="正在卖" readonly>
 
           <dd>{{ form.submit() }}
       </dl>
