@@ -1,9 +1,20 @@
 {% extends "base.html" %}
 
 {% block body %}
-  <h2>我要卖书</h2>
 
-  <form action="{{ url_for('sell') }}" method=post enctype="multipart/form-data">
+    <nav class="navbar navbar-default" role="navigation" style="background:#fff;border-color:#fff;">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<h2 class="navbar-brand" style="color: cornflowerblue">我要卖书</h2>
+	</div>
+	</div>
+    </nav>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-3 col-md-6">
+                    <form class="form-horizontal navbar-form navbar-left" action="{{ url_for('sell') }}" method=post enctype="multipart/form-data">
 
   {% if form.errors %}
       <ul>
@@ -17,33 +28,55 @@
 
 
 
-      <dl>
-          <dt>{{ form.bookname.label }}:
-          <dd><input type=text name=bookname>
 
-          <dt>{{ form.tag.label }}:
-          <dd><input type=text name=tag>
+                        <div class="input-group" width="5%" style="text-align: left">
+                            书名：
+                            <input type="text" class="form-control" name=bookname>
+                        </div><br><br>
 
-          <dt>{{ form.detail.label }}:
-          <dd><textarea rows=5 cols=40 name=detail></textarea>
+                        <div class="input-group" width="5%">
+                            标签：
+                            <input type="text" class="form-control" name=tag>
+                        </div><br><br>
 
-          <dt>{{ form.price.label }}:
-          <dd><input type=number name=price>
+                        <div class="input-group" width="5%">
+                            单价：
+                            <input type="number" class="form-control" name=price>
+                        </div><br><br>
 
-          <dt>{{ form.image.label }}:
-          <dd><input type=file name=image><br/>
+                        <div class="input-group" width="5%">
+                            封面：
+                            <input type="file" name=image>
+                        </div><br><br>
 
-          <dt>{{ form.qrcode.label }}:
-          <dd><input type=file name=qrcode><br/>
+                        <div class="input-group" width="5%">
+                            付款码：
+                            <input type="file" name=qrcode>
+                        </div><br><br>
 
-          <dt>{{ form.file.label }}:
-          <dd><textarea rows=5 cols=40 name=file></textarea>
+                        <div class="input-group" width="5%">
+                            描述：<br>
+                            <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=60 name=detail></textarea>
+                        </div><br>
 
-          <input type=hidden name=state value="正在卖" readonly>
+                        <div class="input-group" width="5%">
+                            下载链接：<br>
+                            <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=60 name=file></textarea>
+                        </div><br>
 
-          <dd>{{ form.submit() }}
-      </dl>
+                        <div class="input-group" width="5%">
+                            <input type=hidden name=state value="正在卖" readonly>
+                        </div><br>
 
-  </form>
+                        <div class="input-group">
+                            <button name=submit class="btn btn-default">发布</button>
+                        </div><br>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
 
 {% endblock %}

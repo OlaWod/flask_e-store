@@ -16,7 +16,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(label='用户名', validators=[DataRequired('用户名不能为空')])
     password = PasswordField(label='密码', validators=[DataRequired('密码不能为空')])
-    submit = SubmitField(label='登入')
+    submit = SubmitField(label='登录')
 
 
 class UploadBookForm(FlaskForm):
@@ -61,6 +61,7 @@ class BuyBookForm(FlaskForm):
     edit = SubmitField(label='编辑信息')
     comment = SubmitField(label='评论')
     report = SubmitField(label='举报')
+    submit = SubmitField(label='提交')
 
 
 class EditUserForm(FlaskForm):
@@ -70,6 +71,10 @@ class EditUserForm(FlaskForm):
 class SearchForm(FlaskForm):
     content = StringField(label='搜索内容', validators=[DataRequired('请输入搜索内容')])
     submit = SubmitField(label='搜索')
+
+
+class HotSortForm(FlaskForm):
+    submit = SubmitField(label='按热门排序')
 
 
 class MessageForm(FlaskForm):

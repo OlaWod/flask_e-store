@@ -2,17 +2,28 @@
 
 {% block body %}
 
-        <ul class=entries>
+    <nav class="navbar navbar-default" role="navigation" style="background:#fff;border-color:#fff;">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<h2 class="navbar-brand" style="color: cornflowerblue">个人信息</h2>
+	</div>
+	</div>
+    </nav>
 
-            <li><h2>id:</h2>{{ user.id}}</li>
-            <li><h2>用户名:</h2>{{ user.username }}</li>
-            <li><h2>密码:</h2>{{ user.password }}</li>
-            <li><h2>更多信息:</h2>{{ user.moreinfo }}</li>
+<div class="container">
 
-        </ul>
+
+            <p>id:</p><input class="panel panel-default" class="form-control" type=text value={{ user.id }} readonly>
+            <p>用户名:</p><input class="panel panel-default" class="form-control" type=text value={{ user.username }} readonly>
+            <p>密码:</p><input class="panel panel-default" class="form-control" type=text value={{ user.password }} readonly>
+            <p>更多信息:</p>
+            <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=60 readonly>{{ user.moreinfo }}</textarea>
+            <br>
+
 
         <form action="{{ url_for('userinfo') }}" method=post>
-            {{ form.edit() }}
+            <button name=submit class="btn btn-default">修改</button>
         </form>
+</div>
 
 {% endblock %}

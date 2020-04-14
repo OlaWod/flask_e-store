@@ -123,6 +123,7 @@ def paysuccess():
              order.state = "已购买"
         else:
             book = Book.query.filter(Book.id == form.book_id.data).first()
+            book.sales += 1
             order = Order(book_id=form.book_id.data, seller_id=form.seller_id.data, buyer_id=current_user.id, file=book.file, state="已购买")
             db.session.add(order)
 
@@ -293,7 +294,7 @@ def sell():
         image = request.files['image'].read()
         qrcode = request.files['qrcode'].read()
         book = Book(bookname=form.bookname.data, tag=form.tag.data, detail=form.detail.data, price=form.price.data, state=form.state.data,
-                    image=image, qrcode=qrcode, file=form.file.data, seller_id=current_user.id)
+                    image=image, qrcode=qrcode, file=form.file.data, seller_id=current_user.id, sales=0)
         db.session.add(book)
         db.session.commit()
         flash('这本书已经放在货架上啦！')
@@ -343,9 +344,22 @@ def search():
     if searchform.validate_on_submit():
         content = searchform.content.data
         print(content)
-        books = Book.query.filter(or_(Book.bookname.like('%'+content+'%'), Book.detail.like('%'+content+'%')), Book.state == "正在卖").all()
+        books = Book.query.filter(or_(Book.id.like('%'+content+'%'), Book.bookname.like('%'+content+'%'), Book.detail.like('%'+content+'%')), Book.state == "正在卖").all()
 
     return render_template('index.html', books=books, base64=base64, str=str, form=form, searchform=searchform)
+
+
+@app.route('/hotsort', methods=['GET', 'POST'])
+def hotsort():
+    form = BuyBookForm()
+    searchform = SearchForm
+    hotsortform = HotSortForm()
+    books = Book.query.filter(Book.state == "正在卖").all()
+    if hotsortform.validate_on_submit():
+        books = Book.query.order_by(db.desc(Book.sales)).all()
+
+    return render_template('index.html', books=books, base64=base64, str=str, form=form, searchform=searchform, hotsortform=hotsortform)
+
 
 
 @app.route('/searchtag', methods=['GET', 'POST'])
@@ -369,12 +383,14 @@ def admin():
 @app.route('/leave_message', methods=['GET', 'POST'])
 def leave_message():
     form = MessageForm()
-    messages = Message.query.all()
+    messages = Message.query.order_by(db.desc(Message.id)).all()
     if form.validate_on_submit():
+        user_id = 0
         username = "匿名用户"
         if current_user.is_authenticated:
+            user_id = current_user.id
             username = current_user.username
-        message = Message(username=username, text=form.text.data)
+        message = Message(user_id=user_id, username=username, text=form.text.data)
         db.session.add(message)
         db.session.commit()
         flash('留言成功！')
@@ -388,7 +404,7 @@ def leave_message():
 def leave_comment():
     form = MessageForm()
     book = Book.query.filter(Book.id == session['comment_book_id']).first()
-    comments = Comment.query.filter(Comment.book_id == session['comment_book_id']).all()
+    comments = Comment.query.filter(Comment.book_id == session['comment_book_id']).order_by(db.desc(Comment.id)).all()
     if form.validate_on_submit():
         comment = Comment(user_id=current_user.id, username=current_user.username, book_id=book.id, bookname=book.bookname, text=form.text.data)
         db.session.add(comment)

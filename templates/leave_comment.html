@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h2>评论《{{ book.bookname }}》</h2>
 
-    <form action="{{ url_for('leave_comment') }}" method=post class=add-entry>
 
-    {% if form.errors %}
+    <nav class="navbar navbar-default" role="navigation" style="background:#fff;border-color:#fff;">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<h2 class="navbar-brand" style="color: cornflowerblue">评论 {{ book.id }}.《{{ book.bookname }}》</h2>
+	</div>
+	</div>
+    </nav>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-3 col-md-6">
+                    <form class="form-horizontal navbar-form navbar-left" action="{{ url_for('leave_comment') }}" method=post>
+
+  {% if form.errors %}
       <ul>
           {% for name, errors in form.errors.items() %}
               {% for error in errors %}
@@ -15,20 +27,38 @@
       </ul>
   {% endif %}
 
-      <dl>
-        <dt>评论内容:
-        <dd><textarea rows=5 cols=40 name=text></textarea>
-        <dd><button name=submit>评论</button>
-      </dl>
+                        <div class="input-group" width="5%">
+                            评论内容：<br>
+                            <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=60 name=text></textarea>
+                        </div><br>
 
-    </form>
+                        <div class="input-group">
+                            <button name=submit class="btn btn-default">评论</button>
+                        </div><br>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    <hr>
 
     <ul class=entries>
         {% for comment in comments %}
-            <li><h2>{{ comment.username}}</h2>{{ comment.text }}</li>
+
+<div class="container"><b>{{ comment.user_id }}.{{ comment.username}}:</b><br>
+            <textarea class="panel panel-default" class="form-control" style="resize: none" rows=3 cols=120 readonly>{{ comment.text }}</textarea>
+            <br>
+</div>
+
         {% else %}
-            <li><em>还没有人评论>.<</em><li>
+            <p>还没有人评论 >.<</p>>
         {% endfor %}
     </ul>
+
+
+
 
 {% endblock %}

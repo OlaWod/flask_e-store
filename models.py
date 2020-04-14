@@ -9,6 +9,7 @@ class Book(db.Model):
     bookname = db.Column(db.String(100), nullable=False)  # 书名
     detail = db.Column(db.Text)  # 详细介绍
     price = db.Column(db.Float, nullable=False)  # 单价
+    sales = db.Column(db.Integer, nullable=False)  # 销量
     seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 卖家id,外键
     state = db.Column(db.String(100), nullable=False)  # 书本状态
     # 书本状态：正在卖; 已下架
@@ -68,7 +69,8 @@ class Order(db.Model):
 class Message(db.Model):
     __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)  # 用户id
+    username = db.Column(db.String(100), nullable=False)  # 用户名
     text = db.Column(db.Text, nullable=False)
 
 

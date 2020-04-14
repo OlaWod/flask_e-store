@@ -1,11 +1,26 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h2>支付《{{ book.bookname }}》{{ book.price }}元</h2>
 
-    <form action="{{ url_for('paysuccess') }}" method=post class=add-entry>
+    <nav class="navbar navbar-default" role="navigation" style="background:#fff;border-color:#fff;">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<h2 class="navbar-brand" style="color: cornflowerblue">支付 {{ book.id }}.《{{ book.bookname }}》{{ book.price }}元</h2>
+	</div>
+	</div>
+    </nav>
 
-    {% if form.errors %}
+    <div class="container">
+    <img  class="img-thumbnail"  style="width:500px;height:500px;" src="data:;base64,{{ str(base64.b64encode(book.qrcode))[2:-1] }}"/>
+    </div>
+    <hr>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-3 col-md-6">
+                    <form class="form-horizontal navbar-form navbar-left" action="{{ url_for('paysuccess') }}" method=post>
+
+  {% if form.errors %}
       <ul>
           {% for name, errors in form.errors.items() %}
               {% for error in errors %}
@@ -15,15 +30,19 @@
       </ul>
   {% endif %}
 
+                        <div class="input-group">
 
         <input type=hidden name=book_id value={{ book.id }} readonly>
         <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
 
-        <img width="80%" height="80%" src="data:;base64,{{ str(base64.b64encode(book.qrcode))[2:-1] }}"/>
-        <button name=submit>支付完成</button>
+                            <button name=submit class="btn btn-default">支付成功</button>
+                        </div><br>
+
+                    </form>
 
 
-    </form>
-
+                </div>
+            </div>
+        </div>
 
 {% endblock %}

@@ -2,27 +2,50 @@
 <html>
   <head>
     <title>朴实无华书店</title>
-    <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='style.css') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='style.css') }}">
   </head>
 
   <body>
     <div class='page'>
-      <h1><a href="{{ url_for('index') }}">朴实无华书店</a></h1>
 
-      <div class='metanav'>
-            <a href="{{ url_for('admin') }}">网站后台</a>
-            <a href="{{ url_for('leave_message') }}">留言板</a>
-            <a href="{{ url_for('userinfo') }}">用户信息</a>
-            <a href="{{ url_for('sell') }}">卖书</a>
-            <a href="{{ url_for('mysell') }}">我卖的书</a>
-            <a href="{{ url_for('cart') }}">购物车</a>
-            <a href="{{ url_for('register') }}">注册</a>
+    <nav class="navbar navbar-default" role="navigation" style="margin-bottom:0; ">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target="#example-navbar-collapse">
+			<span class="sr-only">切换导航</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="{{ url_for('index') }}">朴实无华书店</a>
+	</div>
+	<div class="collapse navbar-collapse" id="example-navbar-collapse">
+		<ul class="nav navbar-nav navbar-right">
+
+            <li><a href="{{ url_for('admin') }}">网站后台</a></li>
+            <li><a href="{{ url_for('leave_message') }}">留言板</a></li>
+            <li><a href="{{ url_for('userinfo') }}">用户信息</a></li>
+            <li><a href="{{ url_for('sell') }}">卖书</a></li>
+            <li><a href="{{ url_for('mysell') }}">我卖的书</a></li>
+            <li><a href="{{ url_for('cart') }}">购物车</a></li>
+            <li><a href="{{ url_for('register') }}">注册</a></li>
             {% if not session.login %}
-                 <a href="{{ url_for('login') }}">登入</a>
+                <li><a href="{{ url_for('login') }}">登录</a></li>
             {% else %}
-                <a href="{{ url_for('logout') }}">退出</a>
+                <li><a href="{{ url_for('logout') }}">退出</a></li>
             {% endif %}
-      </div>
+
+		</ul>
+	</div>
+	</div>
+    </nav>
+
 
       {% for message in get_flashed_messages() %}
         <div class='flash'>{{ message }}</div>
@@ -30,5 +53,7 @@
 
       {% block body %}{% endblock %}
     </div>
+
+
   </body>
 </html>

@@ -2,73 +2,183 @@
 
 {% block body %}
 
-    <h2>首页</h2>
+<nav class="navbar navbar-default" role="navigation" style="background:#fff;border-color:#fff;margin-bottom:0;">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<h2 class="navbar-brand" style="color: cornflowerblue">首页</h2>
+	</div>
 
-        <form action="{{ url_for('search') }}" method=post>
-            <input type=text name=content>
-            <button name=submit>搜索</button>
-        </form>
+        <form class="navbar-form navbar-right" role="search" action="{{ url_for('searchtag') }}" method=post>
+		<div class="input-group" width="5%">
+            <input type="text" class="form-control" placeholder="Search" name=content>
+            <span class="input-group-btn">
+                <button class="btn btn-default" name=submit>搜标签</button>
+            </span>
+        </div><!-- /input-group -->
+	    </form>
 
+	<form class="navbar-form navbar-right" role="search" action="{{ url_for('search') }}" method=post>
+		<div class="input-group" width="5%">
+            <input type="text" class="form-control" placeholder="Search" name=content>
+            <span class="input-group-btn">
+                <button class="btn btn-default" name=submit>搜索</button>
+            </span>
+        </div><!-- /input-group -->
+	</form>
 
-        <form action="{{ url_for('searchtag') }}" method=post>
-            <input type=text name=content>
-            <button name=submit>搜标签</button>
-        </form>
+	</div>
+</nav>
 
-        <div class="tags">
-        <form action="{{ url_for('searchtag') }}" method=post>
-            <input type=hidden name=content value="科幻" readonly>
-            <button name=submit>科幻</button>
-        </form>
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+			<tr>
 
-        <form action="{{ url_for('searchtag') }}" method=post>
-            <input type=hidden name=content value="悬疑" readonly>
-            <button name=submit>悬疑</button>
-        </form>
+                <th><form action="{{ url_for('hotsort') }}" method=post>
+                    <input width=0 type=hidden name=content value="热门" readonly>
+                    <button name=submit class="btn btn-default" style="color: cornflowerblue">热门</button>
+                </form></th>
 
-        <form action="{{ url_for('searchtag') }}" method=post>
-            <input type=hidden name=content value="文艺" readonly>
-            <button name=submit>文艺</button>
-        </form>
-        </div>
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="科幻" readonly>
+                    <button name=submit class="btn btn-default">科幻</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="悬疑" readonly>
+                    <button name=submit class="btn btn-default">悬疑</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="文艺" readonly>
+                    <button name=submit class="btn btn-default">文艺</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="科教" readonly>
+                    <button name=submit class="btn btn-default">科教</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="玄幻" readonly>
+                    <button name=submit class="btn btn-default">玄幻</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="儿童" readonly>
+                    <button name=submit class="btn btn-default">儿童</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="外语" readonly>
+                    <button name=submit class="btn btn-default">外语</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="儿童" readonly>
+                    <button name=submit class="btn btn-default">儿童</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="战争" readonly>
+                    <button name=submit class="btn btn-default">战争</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="娱乐" readonly>
+                    <button name=submit class="btn btn-default">娱乐</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="生活" readonly>
+                    <button name=submit class="btn btn-default">生活</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="工具" readonly>
+                    <button name=submit class="btn btn-default">工具</button>
+                </form></th>
+
+                <th><form action="{{ url_for('searchtag') }}" method=post>
+                    <input width=0 type=hidden name=content value="健康" readonly>
+                    <button name=submit class="btn btn-default">健康</button>
+                </form></th>
+
+			</tr>
+		</thead>
+	</table>
+</div>
+
+    <hr>
+
 
 
         {% for book in books %}
-            <div class="book" xmlns="http://www.w3.org/1999/html">
-                <img width="30%" height="30%" src="data:;base64,{{ str(base64.b64encode(book.image))[2:-1] }}"/>
-                书名：《{{ book.bookname }}》
-                价格：{{ book.price }}元</br>
-                描述：{{ book.detail }}
 
 
-                <form action="{{ url_for('index_like') }}" method=post>
-                    <input type=hidden name=book_id value={{ book.id }} readonly>
-                    <input type=hidden name=seller_id value={{ book.seller_id}} readonly>
-                    {{ form.like() }}
-                </form>
 
-                <form action="{{ url_for('index_buy') }}" method=post>
-                    <input type=hidden name=book_id value={{ book.id }} readonly>
-                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
-                    {{ form.buy() }}
-                </form>
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+			<tr>
 
-                <form action="{{ url_for('index_comment') }}" method=post>
-                    <input type=hidden name=book_id value={{ book.id }} readonly>
-                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
-                    {{ form.comment() }}
-                </form>
 
-                <form action="{{ url_for('index_report') }}" method=post>
-                    <input type=hidden name=book_id value={{ book.id }} readonly>
-                    <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
-                    {{ form.report() }}
-                </form>
+                <th><img  class="img-thumbnail"  style="width:250px;height:250px;" src="data:;base64,{{ str(base64.b64encode(book.image))[2:-1] }}"/></th>
 
-                <hr>
-            </div>
+                <th><div style="font-weight: normal;">
+                    id：{{ book.id }}<br>
+                    书名：《{{ book.bookname }}》<br>
+                    标签：{{ book.tag }}<br>
+                    价格：{{ book.price }}元<br>
+                    销量：{{ book.sales }}<br><br>
+                    描述：<br>
+                    <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=60 readonly>{{ book.detail }}</textarea>
+                </div></th>
+
+                <th>
+                        <form action="{{ url_for('index_like') }}" method=post >
+                            <div class="form-group">
+                        <input type=hidden name=book_id value={{ book.id }} readonly>
+                        <input type=hidden name=seller_id value={{ book.seller_id}} readonly>
+                        <button name=submit class="btn btn-default">收藏</button>
+                            </div>
+                        </form><br>
+
+                        <form action="{{ url_for('index_buy') }}" method=post>
+                            <div class="form-group">
+                        <input type=hidden name=book_id value={{ book.id }} readonly>
+                        <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                        <button name=submit class="btn btn-default">购买</button>
+                            </div>
+                        </form><br>
+
+                        <form action="{{ url_for('index_comment') }}" method=post>
+                            <div class="form-group">
+                        <input type=hidden name=book_id value={{ book.id }} readonly>
+                        <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                        <button name=submit class="btn btn-default">评论</button>
+                            </div>
+                        </form><br>
+
+                        <form action="{{ url_for('index_report') }}" method=post>
+                            <div class="form-group">
+                        <input type=hidden name=book_id value={{ book.id }} readonly>
+                        <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
+                        <button name=submit class="btn btn-default">举报</button>
+                            </div>
+                        </form>
+                 </th>
+
+			</tr>
+		</thead>
+	</table>
+</div>
+
+
+
         {% else %}
-            <li><em>还没有人卖书>.<</em><li>
+            <p>还没有人卖书 >.<</p>
         {% endfor %}
+
 
 {% endblock %}

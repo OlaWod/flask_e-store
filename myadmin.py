@@ -32,7 +32,7 @@ class MyAdminIndexView(AdminIndexView):
             if admin:
                 login_user(admin)
                 session['admin'] = True
-                flash('登入成功!')
+                flash('登录成功!')
             else:
                 flash('用户名或密码错误')
 
