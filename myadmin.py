@@ -3,7 +3,7 @@ from flask_admin import expose, AdminIndexView, helpers
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_user, logout_user
 from forms import LoginForm
-from models import MyAdministrator
+from models import Administrator
 
 
 class MyModelView(ModelView):
@@ -27,8 +27,8 @@ class MyAdminIndexView(AdminIndexView):
         if helpers.validate_form_on_submit(form):
             print(form.username.data)
             print(form.password.data)
-            admin = MyAdministrator.query.filter(MyAdministrator.username == form.username.data,
-                                               MyAdministrator.password == form.password.data).first()
+            admin = Administrator.query.filter(Administrator.username == form.username.data,
+                                               Administrator.password == form.password.data).first()
             if admin:
                 login_user(admin)
                 session['admin'] = True

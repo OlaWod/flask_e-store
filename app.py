@@ -2,7 +2,7 @@ from flask import Flask, render_template, flash, request, session, redirect, url
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
-from flask_admin import Admin
+from flask_admin import Admin, expose, AdminIndexView, helpers
 from flask_admin.contrib.sqla import ModelView
 import base64
 from forms import *
@@ -18,7 +18,47 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-from myadmin import *
+class MyModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and ('admin' in session)
+
+
+class MyAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        if not current_user.is_authenticated or ('admin' not in session):
+            return redirect(url_for('.login_view'))
+        return super(MyAdminIndexView, self).index()
+
+    @expose('/login/', methods=('GET', 'POST'))
+    def login_view(self):
+        # handle user login
+        logout_user()
+        session.pop('login', None)
+        form = LoginForm(request.form)
+        if helpers.validate_form_on_submit(form):
+            print(form.username.data)
+            print(form.password.data)
+            admin = Administrator.query.filter(Administrator.username == form.username.data,
+                                               Administrator.password == form.password.data).first()
+            if admin:
+                login_user(admin)
+                session['admin'] = True
+                flash('登录成功!')
+            else:
+                flash('用户名或密码错误')
+
+        if current_user.is_authenticated:
+            return redirect(url_for('.index'))
+
+        self._template_args['form'] = form
+        return super(MyAdminIndexView, self).index()
+
+    @expose('/logout/')
+    def logout_view(self):
+        logout_user()
+        session.pop('admin', None)
+        return redirect(url_for('.index'))
 admin = Admin(app, name='朴实无华后台', index_view=MyAdminIndexView())
 admin.add_view(MyModelView(User, db.session, name='用户'))
 admin.add_view(MyModelView(Book, db.session, name='书籍'))

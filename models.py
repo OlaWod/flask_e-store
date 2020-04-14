@@ -38,7 +38,7 @@ class User(db.Model, UserMixin):
 
 
 # 管理员
-class MyAdministrator(db.Model, UserMixin):
+class Administrator(db.Model, UserMixin):
     __tablename__ = 'administrators'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), nullable=False, unique=True)  # 用户名
