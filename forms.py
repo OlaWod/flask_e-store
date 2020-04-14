@@ -41,6 +41,7 @@ class EditBookForm(FlaskForm):
     detail = TextAreaField(label='更多信息')
     price = FloatField(label='单价', validators=[DataRequired('单价不能为空')])
     tag = StringField(label='标签')
+    file = TextAreaField(label='文件链接', validators=[DataRequired('文件不能为空！')])
     image = FileField(label='照片', validators=[
         FileAllowed(['jpg', 'png'], '照片只能上传图片!')
     ])

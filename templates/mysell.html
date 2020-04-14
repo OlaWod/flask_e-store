@@ -18,49 +18,61 @@
 			<tr>
 
 
-                <th><img  class="img-thumbnail"  style="width:250px;height:250px;" src="data:;base64,{{ str(base64.b64encode(book.image))[2:-1] }}"/></th>
+                <th><div  style="float: top">
+                    <img  class="img-thumbnail"  style="width:250px;height:250px;" src="data:;base64,{{ str(base64.b64encode(book.image))[2:-1] }}"/>
+                </div></th>
 
-                <th><div style="font-weight: normal;">
-                    id：{{ book.id }}<br>
+                <th><div style="font-weight: normal;float: top">
+                     id：{{ book.id }}<br>
                     书名：《{{ book.bookname }}》<br>
                     标签：{{ book.tag }}<br>
                     价格：{{ book.price }}元<br>
                     销量：{{ book.sales }}<br><br>
-                    描述：<br>
-                    <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=60 readonly>{{ book.detail }}</textarea>
-                </div></th>
-
-                <th>
+                    <table class="table" style="border: #fff"><tr>
+                        <th>
                         <form action="{{ url_for('mysell_delete') }}" method=post >
                             <div class="form-group">
                         <input type=hidden name=book_id value={{ book.id }} readonly>
                         <input type=hidden name=seller_id value={{ book.seller_id}} readonly>
                         <button name=submit class="btn btn-default">下架</button>
                             </div>
-                        </form><br>
+                        </form></th>
 
-                        <form action="{{ url_for('mysell_edit') }}" method=post>
+                        <th><form action="{{ url_for('mysell_edit') }}" method=post>
                             <div class="form-group">
                         <input type=hidden name=book_id value={{ book.id }} readonly>
                         <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
                         <button name=submit class="btn btn-default">编辑</button>
                             </div>
-                        </form><br>
+                        </form></th>
 
-                        <form action="{{ url_for('index_comment') }}" method=post>
+                        <th><form action="{{ url_for('index_comment') }}" method=post>
                             <div class="form-group">
                         <input type=hidden name=book_id value={{ book.id }} readonly>
                         <input type=hidden name=seller_id value={{ book.seller_id }} readonly>
                         <button name=submit class="btn btn-default">评论</button>
                             </div>
-                        </form>
+                        </form></th>
 
+                    </tr></table>
+
+                    </div></th>
+
+                <th>
+                    <div style="font-weight: normal;float: right">
+                    描述：<br>
+                    <textarea class="panel panel-default" class="form-control" style="resize: none" rows=3 cols=40 readonly>{{ book.detail }}</textarea>
+                    <br>
+                        下载：<br>
+                    <textarea class="panel panel-default" class="form-control" style="resize: none" rows=5 cols=40 readonly>{{ book.file }}</textarea>
+                    </div>
                  </th>
 
 			</tr>
 		</thead>
 	</table>
 </div>
+
 
 
         {% else %}

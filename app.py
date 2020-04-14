@@ -32,7 +32,7 @@ admin.add_view(MyModelView(Report, db.session, name='举报'))
 def index():
     form = BuyBookForm()
     searchform = SearchForm()
-    books = Book.query.filter(Book.state == "正在卖").all()
+    books = Book.query.filter(Book.state == "正在卖").order_by(db.desc(Book.id)).all()
     return render_template('index.html', books=books, base64=base64, str=str, form=form, searchform=searchform)
 
 
@@ -131,21 +131,6 @@ def paysuccess():
         flash('购买成功！')
         return redirect(url_for('cart'))
 
-'''
-@app.route('/cart/buy', methods=['GET', 'POST'])
-@login_required
-def cart_buy():
-    form = BuyBookForm()
-    if form.validate_on_submit():
-        order = Order.query.filter(Order.book_id == form.book_id.data, Order.seller_id == form.seller_id.data,
-                                   Order.buyer_id == current_user.id, Order.state == "收藏").first()
-        order.state = "已购买"
-        db.session.commit()
-        flash('购买成功！')
-        return redirect(url_for('cart'))
-
-    return render_template('cart.html')
-'''
 
 @app.route('/mysell/delete', methods=['GET', 'POST'])
 @login_required
@@ -188,6 +173,7 @@ def edit():
         book.bookname = form.bookname.data
         book.tag = form.tag.data
         book.detail = form.detail.data
+        book.file = form.file.data
         book.price = form.price.data
         if form.image.data:
             image = request.files['image'].read()
@@ -221,7 +207,7 @@ def login():
         if user:
             login_user(user)
             session['login'] = True
-            flash('登入成功!')
+            flash('登录成功!')
             return redirect(url_for('index'))
         else:
             flash('用户名或密码错误')
