@@ -283,7 +283,7 @@ def sell():
                     image=image, qrcode=qrcode, file=form.file.data, seller_id=current_user.id, sales=0)
         db.session.add(book)
         db.session.commit()
-        flash('这本书已经放在货架上啦！')
+        flash('这本书成功上架啦！')
         return redirect(url_for('sell'))
 
     return render_template('sell.html', form=form)
