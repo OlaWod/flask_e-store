@@ -1,6 +1,6 @@
-import os
 
-SECRET_KEY = os.urandom(24)
+
+SECRET_KEY = "super secret string"
 WTF_CSRF_ENABLED = False
 DIALECT = 'mysql'
 DRIVER = 'pymysql'
