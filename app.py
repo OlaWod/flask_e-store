@@ -28,6 +28,11 @@ admin.add_view(MyModelView(Comment, db.session, name='评论'))
 admin.add_view(MyModelView(Report, db.session, name='举报'))
 
 
+@app.route('/airport')
+def takeoff():
+    return render_template('airport.html')
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = BuyBookForm()
