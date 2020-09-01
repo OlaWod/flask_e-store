@@ -8,6 +8,7 @@ import base64
 from exts import db
 from forms import *
 from models import *
+from myYOLO import *
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -26,6 +27,24 @@ admin.add_view(MyModelView(Order, db.session, name='订单'))
 admin.add_view(MyModelView(Message, db.session, name='留言'))
 admin.add_view(MyModelView(Comment, db.session, name='评论'))
 admin.add_view(MyModelView(Report, db.session, name='举报'))
+
+
+@app.route('/detect', methods=['GET', 'POST'])
+def detect():
+    form = UploadImgForm()
+    if form.validate_on_submit():
+        image = request.files['image'].read()
+        image = np.asarray(bytearray(image), dtype=np.uint8)
+        image = cv2.imdecode(image, 1)
+
+        yolo_net = Yolo()
+        detected_image = yolo_net.detect(image, "./weights/YOLO_small.ckpt")
+        detected_image = cv2.imencode('.jpg', detected_image)[1]
+        detected_image = np.array(detected_image).tostring()
+
+        return render_template('detect_result.html', img=detected_image, base64=base64, str=str)
+
+    return render_template('detect.html', form=form)
 
 
 @app.route('/airport')

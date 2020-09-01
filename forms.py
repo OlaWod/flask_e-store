@@ -4,6 +4,15 @@ from wtforms.validators import DataRequired, EqualTo
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
+class UploadImgForm(FlaskForm):
+    image = FileField(label='照片', validators=[
+        FileRequired("图片不能为空!"),
+        FileAllowed(['jpg', 'png'], '照片只能上传jpg和png!')
+    ])
+    status = StringField()
+    submit = SubmitField(label='上传')
+
+
 class RegisterForm(FlaskForm):
     username = StringField(label='用户名', validators=[DataRequired('用户名不能为空')])
     password = PasswordField(label='密码', validators=[DataRequired('密码不能为空')])
