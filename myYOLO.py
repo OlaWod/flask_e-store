@@ -14,7 +14,7 @@ def load_train_data():
 
 
 class Yolo(object):
-    def __init__(self):
+    def __init__(self, weights_file = "./weights/YOLO_small.ckpt"):
         self.classes = ["aeroplane", "bicycle", "bird", "boat", "bottle",
                         "bus", "car", "cat", "chair", "cow", "diningtable",
                         "dog", "horse", "motorbike", "person", "pottedplant",
@@ -133,7 +133,7 @@ class Yolo(object):
         return output
 
 
-    def detect(self, image_file, weights_file):
+    def detect(self, image_file):
         # read image
         image = image_file
         img_h, img_w, _ = image.shape # 图片原本的大小
