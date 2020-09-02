@@ -39,7 +39,7 @@ def detect():
         image = cv2.imdecode(image, 1)
 
         #yolo_net = Yolo()
-        detected_image = yolo_net.detect(image, "./weights/YOLO_small.ckpt")
+        detected_image = yolo_net.detect(image)
         detected_image = cv2.imencode('.jpg', detected_image)[1]
         detected_image = np.array(detected_image).tostring()
 
