@@ -25,6 +25,8 @@ class Yolo(object):
 
         self.sess = tf.Session()
         self.build_net()
+        saver = tf.train.Saver()
+        saver.restore(self.sess, weights_file) # 加载训练好的权重
 
         # 检测时将网络的输出翻译成人话要用到的东西们
         self.threshold = 0.2  # confidence scores threshold
@@ -132,8 +134,6 @@ class Yolo(object):
 
 
     def detect(self, image_file, weights_file):
-        saver = tf.train.Saver()
-        saver.restore(self.sess, weights_file) # 加载训练好的权重
         # read image
         image = image_file
         img_h, img_w, _ = image.shape # 图片原本的大小
