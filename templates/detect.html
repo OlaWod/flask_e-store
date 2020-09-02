@@ -20,7 +20,7 @@
 <form class="form-horizontal navbar-form navbar-left" action="{{ url_for('detect') }}" method=post enctype="multipart/form-data">
 
     <div class="input-group">
-        <input type="file" name=image><br><br>
+        <input type="file" name=image accept="image/*" capture="filesystem" @change="upload"><br><br>
         <input name=status value="请选择jpg或png图片" readonly>
     </div><hr>
 
