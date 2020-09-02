@@ -31,14 +31,14 @@ admin.add_view(MyModelView(Report, db.session, name='举报'))
 
 @app.route('/detect', methods=['GET', 'POST'])
 def detect():
-    yolo_net = Yolo() # 一打开就加载会不会好点？
+    #yolo_net = Yolo() # 一打开就加载会不会好点？
     form = UploadImgForm()
     if form.validate_on_submit():
         image = request.files['image'].read()
         image = np.asarray(bytearray(image), dtype=np.uint8)
         image = cv2.imdecode(image, 1)
 
-        #yolo_net = Yolo()
+        yolo_net = Yolo()
         detected_image = yolo_net.detect(image)
         detected_image = cv2.imencode('.jpg', detected_image)[1]
         detected_image = np.array(detected_image).tostring()
