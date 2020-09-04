@@ -142,7 +142,7 @@ class Yolo(object):
         img_input = (img_input / 255.0) * 2.0 - 1.0
         img_input = np.reshape(img_input, (1, 448, 448, 3))
         
-        net_output = none
+        net_output = None
         with tf.Session() as sess:
             saver = tf.train.Saver()
             saver.restore(sess, weights_file) # 加载训练好的权重
