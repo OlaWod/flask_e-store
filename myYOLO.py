@@ -14,7 +14,7 @@ def load_train_data():
 
 
 class Yolo(object):
-    def __init__(self, weights_file = "./weights/YOLO_small.ckpt"):
+    def __init__(self):
         self.classes = ["aeroplane", "bicycle", "bird", "boat", "bottle",
                         "bus", "car", "cat", "chair", "cow", "diningtable",
                         "dog", "horse", "motorbike", "person", "pottedplant",
@@ -25,8 +25,8 @@ class Yolo(object):
 
         #self.sess = tf.Session()
         self.build_net()
-        saver = tf.train.Saver()
-        saver.restore(self.sess, weights_file) # 加载训练好的权重
+        #ssaver = tf.train.Saver()
+        #ssaver.restore(self.sess, weights_file) # 加载训练好的权重
 
         # 检测时将网络的输出翻译成人话要用到的东西们
         self.threshold = 0.2  # confidence scores threshold
@@ -133,7 +133,7 @@ class Yolo(object):
         return output
 
 
-    def detect(self, image_file):
+    def detect(self, image_file, weights_file = "./weights/YOLO_small.ckpt"):
         # read image
         image = image_file
         img_h, img_w, _ = image.shape # 图片原本的大小
@@ -144,6 +144,8 @@ class Yolo(object):
         
         net_output = none
         with tf.Session() as sess:
+            saver = tf.train.Saver()
+            saver.restore(sess, weights_file) # 加载训练好的权重
             net_output = sess.run(self.net_output, feed_dict={self.img_input: img_input})[0]
         predict_boxes = self.interpret_output(net_output, img_h, img_w) # 预测出的框们(class, x, y, w, h, score)
         self.sess.close()
