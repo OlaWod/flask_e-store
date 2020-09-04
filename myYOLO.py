@@ -144,7 +144,7 @@ class Yolo(object):
         
         net_output = self.sess.run(self.net_output, feed_dict={self.img_input: img_input})[0]
         predict_boxes = self.interpret_output(net_output, img_h, img_w) # 预测出的框们(class, x, y, w, h, score)
-        sess.close()
+        self.sess.close()
         return self.show_results(image, predict_boxes)
 
 
