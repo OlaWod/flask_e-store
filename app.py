@@ -28,6 +28,9 @@ admin.add_view(MyModelView(Message, db.session, name='留言'))
 admin.add_view(MyModelView(Comment, db.session, name='评论'))
 admin.add_view(MyModelView(Report, db.session, name='举报'))
 
+@app.route('/hand')
+def hand():
+    return render_template('hand.html')
 
 @app.route('/detect', methods=['GET', 'POST'])
 def detect():
